@@ -13,8 +13,20 @@ def main():
 	all_three_runs = []
 	three_runs_next_output = []
 
+
+	total = 0
 	for elem in train_data_json:
 		song, artist = elem.split(":::")
+		print artist
+		print song
+		metadata = getGraceNoteMetadata(artist, song)
+		song_name metadata['track_title']
+		artist_name = metadata['album_artist_name']
+
+		if artist.strip() == artist_name.strip() and song.strip() == song_name.strip():
+			total+=1
+		#print metadata
+		raw_input()
 		positions_list = []
 		for x in train_data_json[elem]:
 			positions_list.append(int(x[u'position']))
@@ -22,6 +34,8 @@ def main():
 			for i in range(len(positions_list)-4):
 				all_three_runs.append([positions_list[i], positions_list[i+1], positions_list[i+2]])
 				three_runs_next_output.append(positions_list[i+3])	
+	print total
+	raw_input()
 
 	clf = linear_model.Ridge(alpha=0.4)
 	clf.fit(all_three_runs, three_runs_next_output)
@@ -56,13 +70,15 @@ def getGraceNoteMetadata(artist, song):
 	userID = pygn.register(clientID)
 
 	metadata = pygn.search(clientID=clientID, userID=userID, artist=artist, track=song)
-	for elem in metadata:
+	'''for elem in metadata:
 		if str(metadata[elem]) != '':
 			print 'Field = ' + elem
 			print '\t' + str(metadata[elem])
 			print "\n"
-	f = open('output.xml', 'w')
-	f.write(str(metadata))
+	'''
+	return metadata
+	# f = open('output.xml', 'w')
+	# f.write(str(metadata))
 
 
 
