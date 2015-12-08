@@ -3,6 +3,8 @@ import sys
 from sklearn import linear_model
 import json
 
+var = 'This is just a test to see if this works.'
+
 def main():
 	song_paths_train_file = open('data/song_paths_train.json', 'r')
 	train_data_json = json.load(song_paths_train_file) # is a map
