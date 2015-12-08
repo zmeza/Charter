@@ -3,14 +3,15 @@ import sys
 from sklearn import linear_model
 import json
 
-var = 'This is just a test to see if this works.'
 
 def main():
-	song_paths_train_file = open('data/song_paths_train.json', 'r')
+	song_paths_train_file = open('data/train_paths.json', 'r')
+	print song_paths_train_file.read()[11:15]
+	raw_input()
 	train_data_json = json.load(song_paths_train_file) # is a map
 
-	song_paths_test_file = open('data/song_paths_test.json', 'r')
-	test_data_json = json.load(song_paths_test_file) # is a map
+	song_paths_test_file = open('data/test_paths.json', 'r')
+	#test_data_json = json.load(song_paths_test_file) # is a map
 
 	all_three_runs = []
 	three_runs_next_output = []
@@ -23,6 +24,24 @@ def main():
 		metadata_file = open('new_metadata.json')
 	gracenote_metadata = json.load(metadata_file)
 	metadata_file.close()
+
+
+	for elem in train_data_json:
+		if elem in gracenote_metadata:
+			print "in there"
+		else:
+			print "not"
+			print elem
+		print "\n\n"
+
+
+
+
+	raw_input()
+
+
+
+
 
 
 	
