@@ -30,10 +30,8 @@ def main():
 
 	print len(paths_json), len(test_dict), len(train_dict)
 
-	ftrain.write('song_paths = ')
 	ftrain.write(json.dumps(train_dict, indent=4))
 
-	ftest.write('song_paths = ')
 	ftest.write(json.dumps(test_dict, indent=4))
 
 
