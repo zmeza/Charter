@@ -3,6 +3,10 @@
 import pygn
 import sys
 from sklearn import linear_model
+#from sklearn.svm import SVR
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.pipeline import Pipeline
 import scipy
 import json
 
@@ -10,7 +14,7 @@ DELIM = ':::'
 
 def main():
 	args = sys.argv[1:]
-	window_size = int(args[0])
+	#window_size = int(args[0])
 
 	fin = open('data/train_paths.json', 'r')
 	train_data_json = json.load(fin) # is a map
@@ -24,19 +28,22 @@ def main():
 	num_train = len(train_data_json)
 	print num_train
 
-	total_error = 0
-	fold_len = num_train / 10
-	total_error += hold_out_fold(range(fold_len), train_data_json, 1, window_size)
+	window_sizes = range(1,11)
+	errors_by_window_size = [None] * 10
+	for n, window_size in enumerate(window_sizes):
+		total_error = 0
+		fold_len = num_train / 10
+		total_error += hold_out_fold(range(fold_len), train_data_json, 1, window_size)
 
-
-	for i in range(1, 10):
-		if (i < 9):
-			total_error += hold_out_fold(range((i) * fold_len, (i + 1) * fold_len), train_data_json, i + 1, window_size)
-		else:
-			total_error += hold_out_fold(range((i) * fold_len, num_train), train_data_json, i + 1, window_size)
-
-
-	print 'overall error: %f' % (total_error / 10.0)
+		for i in range(1, 10):
+			if (i < 9):
+				total_error += hold_out_fold(range((i) * fold_len, (i + 1) * fold_len), train_data_json, i + 1, window_size)
+			else:
+				total_error += hold_out_fold(range((i) * fold_len, num_train), train_data_json, i + 1, window_size)
+		errors_by_window_size[n] = 'overall error for window size %d: %f' % (window_size, total_error / 10.0)
+		#print 'overall error for window size %d: %f' % (window_size, total_error / 10.0)
+	for error in errors_by_window_size:
+		print error
 
 	# total = 0
 	# for elem in train_data_json:
@@ -104,9 +111,14 @@ def hold_out_fold(hold_out_indices, data_dict, fold_num, window_size):
 			input_features.append(first_three)
 			next_entries.append(data[window_size][2]);
 
-	clf = linear_model.Ridge(alpha=0.1)
+	#clf = linear_model.Ridge(alpha=0.1)
+	#clf = linear_model.BayesianRidge()
+	#clf = SVR(kernel='linear', C=1e3)
+	#clf = LogisticRegression(C=1, penalty='l2', tol=0.01)
+	#clf = linear_model.LinearRegression()
+	#clf = linear_model.Perceptron()
+	clf = Pipeline([('poly', PolynomialFeatures(degree=3)), ('linear', linear_model.LinearRegression(fit_intercept=False))])
 	clf.fit(input_features, next_entries)
-
 	total_error = 0
 	num = 0
 

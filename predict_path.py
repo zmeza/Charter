@@ -113,7 +113,7 @@ def predict_paths(data_dict, song_to_gold_map, song_to_predict_map, model, windo
 
 
 			for k in range(window_size, gold_len - 1):
-				input_features = input_features[1:3]
+				input_features = input_features[1:window_size]
 				input_features.append(prediction)
 				input_features.append(data[0][0] - 1958)
 				input_features.append(data[0][1])
@@ -168,7 +168,10 @@ def hold_out_fold(hold_out_indices, data_dict, fold_num, window_size):
 			input_features.append(first_three)
 			next_entries.append(data[window_size][2]);
 
-	clf = linear_model.Ridge(alpha=0.1)
+	#clf = linear_model.Ridge(alpha=0.1)
+	clf = SVR(kernel='poly', C=1e3, degree=2)
+	print "here"
+	raw_input()
 	clf.fit(input_features, next_entries)
 
 	total_error = 0
